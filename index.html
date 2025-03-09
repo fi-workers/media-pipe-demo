@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,17 +16,21 @@
       padding: 20px;
       background-color: #f5f5f5;
     }
+
     .container {
       max-width: 900px;
       margin: 0 auto;
       background-color: white;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-    h1, h2 {
+
+    h1,
+    h2 {
       color: #333;
     }
+
     .display-container {
       display: flex;
       flex-direction: row;
@@ -34,16 +39,33 @@
       justify-content: center;
       margin-bottom: 20px;
     }
-    .video-container, .canvas-container {
+
+    .video-container {
+      display: none;
+      /* 비디오 컨테이너 숨김 */
       width: 320px;
       height: 240px;
       position: relative;
     }
-    #input, #output {
+
+    .canvas-container {
+      width: 320px;
+      height: 240px;
+      position: relative;
+    }
+
+    #input {
       width: 100%;
       height: 100%;
       background-color: #000;
     }
+
+    #output {
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+    }
+
     canvas {
       position: absolute;
       top: 0;
@@ -51,18 +73,21 @@
       width: 100%;
       height: 100%;
     }
+
     .angles {
       margin-top: 20px;
       padding: 15px;
       background-color: #f0f0f0;
       border-radius: 5px;
     }
+
     .control-panel {
       margin-top: 20px;
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
+
     button {
       padding: 10px;
       background-color: #4285f4;
@@ -71,6 +96,7 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #3b77db;
     }
@@ -81,7 +107,7 @@
   <div class="container">
     <h1>MediaPipe Pose 데모</h1>
     <p>이 예제는 MediaPipe Pose를 사용하여 실시간으로 자세 분석과 각도를 측정합니다.</p>
-    
+
     <div class="display-container">
       <div class="video-container">
         <video id="input"></video>
@@ -90,12 +116,12 @@
         <canvas id="output"></canvas>
       </div>
     </div>
-    
+
     <div class="control-panel">
       <button id="startButton">시작</button>
       <button id="stopButton">중지</button>
     </div>
-    
+
     <div class="angles">
       <h2>측정된 각도</h2>
       <div>
@@ -116,11 +142,11 @@
       // 세 점 사이의 각도를 계산
       const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
       let angle = Math.abs(radians * 180.0 / Math.PI);
-      
+
       if (angle > 180.0) {
         angle = 360 - angle;
       }
-      
+
       return angle.toFixed(1);
     }
 
@@ -130,7 +156,7 @@
     const canvasCtx = canvasElement.getContext('2d');
     const startButton = document.getElementById('startButton');
     const stopButton = document.getElementById('stopButton');
-    
+
     // 각도 표시 요소
     const leftShoulderAngleElement = document.getElementById('leftShoulderAngle');
     const rightShoulderAngleElement = document.getElementById('rightShoulderAngle');
@@ -170,9 +196,9 @@
 
       // 포즈 랜드마크 그리기
       if (results.poseLandmarks) {
-        drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {color: '#00FF00', lineWidth: 4});
-        drawLandmarks(canvasCtx, results.poseLandmarks, {color: '#FF0000', lineWidth: 2});
-        
+        drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00FF00', lineWidth: 4 });
+        drawLandmarks(canvasCtx, results.poseLandmarks, { color: '#FF0000', lineWidth: 2 });
+
         // 랜드마크 인덱스
         // 11: 왼쪽 어깨, 13: 왼쪽 팔꿈치, 15: 왼쪽 손목
         // 12: 오른쪽 어깨, 14: 오른쪽 팔꿈치, 16: 오른쪽 손목
@@ -182,71 +208,71 @@
 
         // 각도 계산
         const landmarks = results.poseLandmarks;
-        
+
         // 왼쪽 어깨 각도 (힙-어깨-팔꿈치)
         const leftShoulderAngle = calculateAngle(
           landmarks[23], // 왼쪽 엉덩이
           landmarks[11], // 왼쪽 어깨
           landmarks[13]  // 왼쪽 팔꿈치
         );
-        
+
         // 오른쪽 어깨 각도 (힙-어깨-팔꿈치)
         const rightShoulderAngle = calculateAngle(
           landmarks[24], // 오른쪽 엉덩이
           landmarks[12], // 오른쪽 어깨
           landmarks[14]  // 오른쪽 팔꿈치
         );
-        
+
         // 왼쪽 팔꿈치 각도 (어깨-팔꿈치-손목)
         const leftElbowAngle = calculateAngle(
           landmarks[11], // 왼쪽 어깨
           landmarks[13], // 왼쪽 팔꿈치
           landmarks[15]  // 왼쪽 손목
         );
-        
+
         // 오른쪽 팔꿈치 각도 (어깨-팔꿈치-손목)
         const rightElbowAngle = calculateAngle(
           landmarks[12], // 오른쪽 어깨
           landmarks[14], // 오른쪽 팔꿈치
           landmarks[16]  // 오른쪽 손목
         );
-        
+
         // 왼쪽 무릎 각도 (엉덩이-무릎-발목)
         const leftKneeAngle = calculateAngle(
           landmarks[23], // 왼쪽 엉덩이
           landmarks[25], // 왼쪽 무릎
           landmarks[27]  // 왼쪽 발목
         );
-        
+
         // 오른쪽 무릎 각도 (엉덩이-무릎-발목)
         const rightKneeAngle = calculateAngle(
           landmarks[24], // 오른쪽 엉덩이
           landmarks[26], // 오른쪽 무릎
           landmarks[28]  // 오른쪽 발목
         );
-        
+
         // 척추 각도 (어깨 중간과 엉덩이 중간 사이의 수직 각도)
         const shoulderMidpoint = {
           x: (landmarks[11].x + landmarks[12].x) / 2,
           y: (landmarks[11].y + landmarks[12].y) / 2
         };
-        
+
         const hipMidpoint = {
           x: (landmarks[23].x + landmarks[24].x) / 2,
           y: (landmarks[23].y + landmarks[24].y) / 2
         };
-        
+
         const verticalReference = {
           x: shoulderMidpoint.x,
           y: 0
         };
-        
+
         const spineAngle = calculateAngle(
           verticalReference,
           shoulderMidpoint,
           hipMidpoint
         );
-        
+
         // 각도 표시 업데이트
         leftShoulderAngleElement.textContent = leftShoulderAngle;
         rightShoulderAngleElement.textContent = rightShoulderAngle;
@@ -256,14 +282,14 @@
         rightKneeAngleElement.textContent = rightKneeAngle;
         spineAngleElement.textContent = spineAngle;
       }
-      
+
       canvasCtx.restore();
     });
 
     // 카메라 설정
     const camera = new Camera(videoElement, {
       onFrame: async () => {
-        await pose.send({image: videoElement});
+        await pose.send({ image: videoElement });
       },
       width: 640,
       height: 480
@@ -279,4 +305,5 @@
     });
   </script>
 </body>
+
 </html>
